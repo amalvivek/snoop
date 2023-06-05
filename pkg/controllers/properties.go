@@ -54,7 +54,7 @@ func GetProperty(c *gin.Context) {
 }
 
 func AddProperty(c *gin.Context) {
-
+	test
 	p := new(Property)
 	err := c.Bind(p)
 
