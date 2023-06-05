@@ -23,6 +23,7 @@ func main() {
 	// Properties APIs
 	router.GET("/properties", controllers.SearchProperties)
 	router.GET("/properties/:id", controllers.GetProperty)
+	router.POST("/properties", controllers.AddProperty)
 
 	//router.GET("/albums", getAlbums)
 	//router.GET("/albums/:id", getAlbumByID)

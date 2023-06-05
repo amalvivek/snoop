@@ -67,10 +67,8 @@ func AddLandlord(c *gin.Context) {
 	}
 
 	var query = "CREATE (l:Landlords {id: randomUUID(), name: '" + l.Name + "', email: '" + l.Email + "', contact: '" + l.Contact + "'}) RETURN l;"
-	log.Println(query)
 
 	res, err := database.ExecuteQuery(c, database.Query{String: query, Type: "WRITE"}, nil)
-	log.Println(res)
 	if err != nil {
 		log.Println(err)
 		return

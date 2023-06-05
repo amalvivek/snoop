@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"log"
 	"net/http"
 	"snoop-server/pkg/database"
 )
@@ -50,4 +51,24 @@ func GetProperty(c *gin.Context) {
 	} else {
 		c.IndentedJSON(http.StatusOK, Property{}.Reconstruct(res.Records[0]))
 	}
+}
+
+func AddProperty(c *gin.Context) {
+
+	p := new(Property)
+	err := c.Bind(p)
+
+	if err != nil {
+		return
+	}
+
+	var query = "CREATE (n:Properties {id: randomUUID(), address: '" + p.Address + "'}) RETURN n;"
+
+	res, err := database.ExecuteQuery(c, database.Query{String: query, Type: "WRITE"}, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	c.IndentedJSON(http.StatusCreated, res)
 }
