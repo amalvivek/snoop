@@ -14,12 +14,22 @@ func main() {
 	router := gin.Default()
 
 	router.Use(database.ErrorHandler)
-	router.GET("/landlords/search", controllers.SearchLandlords)
-	router.GET("/properties/search", controllers.SearchProperties)
+
+	// Landlord APIs
+	router.GET("/landlords", controllers.SearchLandlords)
+	router.GET("/landlords/:id", controllers.GetLandlord)
+	router.POST("/landlords", controllers.AddLandlord)
+
+	// Properties APIs
+	router.GET("/properties", controllers.SearchProperties)
+	router.GET("/properties/:id", controllers.GetProperty)
 
 	//router.GET("/albums", getAlbums)
 	//router.GET("/albums/:id", getAlbumByID)
 	//router.POST("/albums", postAlbums)
 
-	router.Run("localhost:8080")
+	err := router.Run("localhost:8080")
+	if err != nil {
+		return
+	}
 }

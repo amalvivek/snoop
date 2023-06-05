@@ -15,6 +15,11 @@ type Result interface {
 	Reconstruct(result *neo4j.EagerResult) any
 }
 
+type Query struct {
+	String string
+	Type   string
+}
+
 type Neo4jConfiguration struct {
 	Url      string
 	Username string
@@ -78,9 +83,20 @@ func ErrorHandler(c *gin.Context) {
 	c.JSON(http.StatusInternalServerError, "")
 }
 
-func ExecuteQuery(ctx context.Context, query string, parameters map[string]any) (res *neo4j.EagerResult, err error) {
-	return neo4j.ExecuteQuery(ctx, driver, query, parameters,
+func ExecuteQuery(ctx context.Context, query Query, parameters map[string]any) (res *neo4j.EagerResult, err error) {
+
+	var routing neo4j.ExecuteQueryConfigurationOption
+	switch query.Type {
+	case "READ":
+		routing = neo4j.ExecuteQueryWithReadersRouting()
+	case "WRITE":
+		routing = neo4j.ExecuteQueryWithWritersRouting()
+	default:
+		routing = neo4j.ExecuteQueryWithReadersRouting()
+	}
+
+	return neo4j.ExecuteQuery(ctx, driver, query.String, parameters,
 		neo4j.EagerResultTransformer,
-		neo4j.ExecuteQueryWithReadersRouting(),
+		routing,
 		neo4j.ExecuteQueryWithDatabase(configuration.Database))
 }
